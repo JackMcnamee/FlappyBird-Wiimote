@@ -36,11 +36,8 @@ public class Bird : MonoBehaviour {
     private Rigidbody2D birdRigidbody2D;
     private State state;
 
-    // Need for wiimote
+    // Wiimote variables
     public WiimoteModel model;
-    public RectTransform[] ir_dots;
-    public RectTransform[] ir_bb;
-    public RectTransform ir_pointer;
 
     private Quaternion initial_rotation;
 
@@ -86,15 +83,7 @@ public class Bird : MonoBehaviour {
                 {
                     default:
                     case State.WaitingToStart:
-                        if (wiimote.MotionPlus.PitchSlow == false)
-                        {
-                            // Start playing
-                            state = State.Playing;
-                            birdRigidbody2D.bodyType = RigidbodyType2D.Dynamic;
-                            Jump();
-                            if (OnStartedPlaying != null) OnStartedPlaying(this, EventArgs.Empty);
-                        }
-                        else if (TestInput())
+                        if (TestInput())
                         {
                             // Start playing
                             state = State.Playing;
@@ -104,10 +93,12 @@ public class Bird : MonoBehaviour {
                         }
                         break;
                     case State.Playing:
+                        // If wiimote is moved upwards
                         if (wiimote.MotionPlus.PitchSlow == false)
                         {
                             Jump();
                         }
+
                         if (TestInput())
                         {
                             Jump();
@@ -148,10 +139,9 @@ public class Bird : MonoBehaviour {
     }
 
     private bool TestInput() {
-        return 
-            Input.GetKeyDown(KeyCode.Space) ||
+        return
             wiimote.Button.a ||
-            Input.touchCount > 0;
+            wiimote.Button.b;
     }
 
     private void Jump() {
@@ -165,29 +155,20 @@ public class Bird : MonoBehaviour {
         if (OnDied != null) OnDied(this, EventArgs.Empty);
     }
 
-    IEnumerator ExampleCoroutine()
-    {
-        //Print the time of when the function is first called.
-        Debug.Log("Started Coroutine at timestamp : " + Time.time);
-
-        //yield on a new YieldInstruction that waits for 5 seconds.
-        yield return new WaitForSeconds(5);
-
-        //After we have waited 5 seconds print the time again.
-        Debug.Log("Finished Coroutine at timestamp : " + Time.time);
-    }
-
+    // Display for player to connect their wiimote to Unity
     void OnGUI()
     {
-        GUI.Box(new Rect(0, 0, 250, Screen.height), "");
+        GUI.Box(new Rect(0, 0, 235, Screen.height), "");
 
         GUILayout.BeginVertical(GUILayout.Width(230));
+        // Find wiimote
         GUILayout.Label("Wiimote Found: " + WiimoteManager.HasWiimote());
         if (GUILayout.Button("Find Your Wiimote"))
         {
             WiimoteManager.FindWiimotes();
         }
 
+        // Remove wiimote
         if (GUILayout.Button("Cleanup"))
         {
             WiimoteManager.Cleanup(wiimote);
@@ -197,7 +178,8 @@ public class Bird : MonoBehaviour {
         if (wiimote == null)
             return;
 
-        GUILayout.Label("Press A on your wiimote to start!");
+        GUILayout.Label("Press A or B on your wiimote to start!");
+        // Finds and activates wii motion plus
         if (GUILayout.Button("Press if Wiimotion Plus attached"))
         {
             wiimote.SetupIRCamera(IRDataType.BASIC);
@@ -207,34 +189,20 @@ public class Bird : MonoBehaviour {
                             && GUILayout.Button("Press to activate Wiimotion Plus"))
             wiimote.ActivateWiiMotionPlus();
 
-        //GUIStyle bold = new GUIStyle(GUI.skin.button);
+        // Instructions for player
         if (wiimote.current_ext == ExtensionController.MOTIONPLUS)
         {
-            GUILayout.Label("Wii Motion Plus Activated!");//, bold);
-            GUILayout.Label("Press A or shake wiimote upwards to control the flappy bird");
+            GUILayout.Label("Wii Motion Plus Activated!");
+            GUILayout.Label("Press A or B, or shake wiimote upwards to control the flappy bird");
         }
 
         GUILayout.EndVertical();
     }
 
-    private Vector3 GetAccelVector()
-    {
-        float accel_x;
-        float accel_y;
-        float accel_z;
-
-        float[] accel = wiimote.Accel.GetCalibratedAccelData();
-        accel_x = accel[0];
-        accel_y = -accel[2];
-        accel_z = -accel[1];
-
-        return new Vector3(accel_x, accel_y, accel_z).normalized;
-    }
-
     [System.Serializable]
     public class WiimoteModel
     {
-        public Transform rot;
+        public Transform bird;
     }
 
     void OnApplicationQuit()

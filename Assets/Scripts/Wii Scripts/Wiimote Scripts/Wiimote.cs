@@ -19,21 +19,6 @@ namespace WiimoteApi
         public AccelData Accel { get { return _Accel; } }
         private AccelData _Accel;
 
-        /// If a Nunchuck is currently connected to the Wii Remote's extension port,
-        /// this contains all relevant Nunchuck controller data as it is reported by
-        /// the Wiimote.  If no Nunchuck is connected, this is \c null.
-        ///
-        /// \sa current_ext
-        public NunchuckData Nunchuck
-        {
-            get
-            {
-                if (current_ext == ExtensionController.NUNCHUCK)
-                    return (NunchuckData)_Extension;
-                return null;
-            }
-        }
-
         /// If a Classic Controller is currently connected to the Wii Remote's extension port,
         /// this contains all relevant Classic Controller data as it is reported by
         /// the Wiimote.  If no Classic Controller is connected, this is \c null.
@@ -76,21 +61,6 @@ namespace WiimoteApi
             {
                 if (current_ext == ExtensionController.WIIU_PRO)
                     return (WiiUProData)_Extension;
-                return null;
-            }
-        }
-
-        /// If this Wiimote is a Guitar Hero Guitar Controller,
-        /// this contains all relevant Guitar data as it is reported by
-        /// the Controller.  If this Wiimote is not a Guitar Controller, this is \c null.
-        ///
-        /// \sa current_ext
-        public GuitarData Guitar
-        {
-            get
-            {
-                if (current_ext == ExtensionController.GUITAR)
-                    return (GuitarData)_Extension;
                 return null;
             }
         }
@@ -236,12 +206,6 @@ namespace WiimoteApi
                 _current_ext = ExtensionController.CLASSIC_PRO;
                 _Extension = null;
             }
-            else if (val == ID_Nunchuck || val == ID_Nunchuck2)
-            {
-                _current_ext = ExtensionController.NUNCHUCK;
-                if (_Extension == null || _Extension.GetType() != typeof(NunchuckData))
-                    _Extension = new NunchuckData(this);
-            }
             else if (val == ID_Classic)
             {
                 _current_ext = ExtensionController.CLASSIC;
@@ -254,12 +218,6 @@ namespace WiimoteApi
                 _Type = WiimoteType.PROCONTROLLER;
                 if (_Extension == null || _Extension.GetType() != typeof(WiiUProData))
                     _Extension = new WiiUProData(this);
-            }
-            else if (val == ID_Guitar)
-            {
-                _current_ext = ExtensionController.GUITAR;
-                if (_Extension == null || _Extension.GetType() != typeof(GuitarData))
-                    _Extension = new GuitarData(this);
             }
             else
             {

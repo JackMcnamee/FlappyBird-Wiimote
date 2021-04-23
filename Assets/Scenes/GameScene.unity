@@ -579,7 +579,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   model:
-    rot: {fileID: 434954118}
+    bird: {fileID: 434954118}
 --- !u!114 &434954122
 MonoBehaviour:
   m_ObjectHideFlags: 0
