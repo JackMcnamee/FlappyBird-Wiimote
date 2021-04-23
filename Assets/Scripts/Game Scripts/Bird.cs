@@ -129,7 +129,6 @@ public class Bird : MonoBehaviour {
             if (TestInput()) {
                 Jump();
             }
-
             // Rotate bird as it jumps and falls
             transform.eulerAngles = new Vector3(0, 0, birdRigidbody2D.velocity.y * .15f);
             break;
@@ -140,8 +139,7 @@ public class Bird : MonoBehaviour {
 
     private bool TestInput() {
         return
-            wiimote.Button.a ||
-            wiimote.Button.b;
+            wiimote.Button.a;
     }
 
     private void Jump() {
@@ -162,7 +160,7 @@ public class Bird : MonoBehaviour {
 
         GUILayout.BeginVertical(GUILayout.Width(230));
         // Find wiimote
-        GUILayout.Label("Wiimote Found: " + WiimoteManager.HasWiimote());
+        GUILayout.Label(" Wiimote Found: " + WiimoteManager.HasWiimote());
         if (GUILayout.Button("Find Your Wiimote"))
         {
             WiimoteManager.FindWiimotes();
@@ -178,7 +176,7 @@ public class Bird : MonoBehaviour {
         if (wiimote == null)
             return;
 
-        GUILayout.Label("Press A or B on your wiimote to start!");
+        GUILayout.Label(" Press A on your wiimote to start!");
         // Finds and activates wii motion plus
         if (GUILayout.Button("Press if Wiimotion Plus attached"))
         {
@@ -192,8 +190,9 @@ public class Bird : MonoBehaviour {
         // Instructions for player
         if (wiimote.current_ext == ExtensionController.MOTIONPLUS)
         {
-            GUILayout.Label("Wii Motion Plus Activated!");
-            GUILayout.Label("Press A or B, or shake wiimote upwards to control the flappy bird");
+            GUILayout.Label(" Wii Motion Plus Activated!");
+            GUILayout.Label(" Press A on your wiimote to start!");
+            GUILayout.Label(" Press A or shake wiimote upwards to control the flappy bird");
         }
 
         GUILayout.EndVertical();

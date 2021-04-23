@@ -15,11 +15,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using CodeMonkey.Utils;
+using WiimoteApi;
 
 public class GameOverWindow : MonoBehaviour {
 
     private Text scoreText;
     private Text highscoreText;
+    private Wiimote wiimote;
+    private Bird bird;
 
     private void Awake() {
         scoreText = transform.Find("scoreText").GetComponent<Text>();
@@ -40,9 +43,24 @@ public class GameOverWindow : MonoBehaviour {
     }
 
     private void Update() {
-        if (Input.GetKeyDown(KeyCode.Space)) {
+
+        if (!WiimoteManager.HasWiimote()) { return; }
+
+        wiimote = WiimoteManager.Wiimotes[0];
+
+        int ret;
+        do
+        {
+            ret = wiimote.ReadWiimoteData();
+        } while (ret > 0);
+
+        if (wiimote.Button.b) {
             // Retry
             Loader.Load(Loader.Scene.GameScene);
+        }
+        else if(wiimote.Button.home)
+        {
+            Loader.Load(Loader.Scene.MainMenu);
         }
     }
 
